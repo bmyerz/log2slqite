@@ -1,5 +1,7 @@
 import re
+import sys
 import json
+import argparse
 import dataset
 import json
 from abc import abstractmethod
@@ -66,8 +68,24 @@ class SQLiteProcessor(Processor):
 
 
 def run(inputstr, parser, processor):
+    count = 0
     for r in parser.recorditer(inputstr):
         processor.processrecord(r)
+        count += 1
 
     processor.close()
+    print "processed {0} records".format(count)
 
+if __name__ == '__main__':
+    p = argparse.ArgumentParser(prog=sys.argv[0])
+    p.add_argument("-d", dest="dbname", required=True, help="database name")
+    p.add_argument("-t", dest="tablename", required=True, help="table name")
+    p.add_argument("-i", dest="inputf", required=True,
+                   help="input log file; may contain multiple records")
+
+    args = p.parse_args(sys.argv[1:])
+
+    with open(args.inputf, 'r') as inf:
+        run(inf.read(),
+            GrappaLogParser(),
+            SQLiteProcessor(args.dbname, args.tablename))
