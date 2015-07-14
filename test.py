@@ -1,14 +1,6 @@
-import re
-import json
-import dataset
-import json
+import log2sqlite
 
-runpat = re.compile(r'STATS{[^}]+}STATS')
-frontpat = re.compile(r'00:')
-statspat = re.compile(r'STATS')
-lastcomma = re.compile(r',[^,}]+}')
-
-i = re.finditer(runpat, """
+logstr = """
     00: STATS{
       00:   "app_1_gce_incomplete": 0,
       00:   "app_2_gce_incomplete": 0,
@@ -40,30 +32,8 @@ i = re.finditer(runpat, """
         00:   "emit_count": 4,
         00:
         00: }STATS
-        """)
+        """
 
-dbfile = 'newtest.db'
-db = dataset.connect('sqlite:///{0}'.format(dbfile))
+log2sqlite.run(logstr, log2sqlite.GrappaLogParser(),
+               log2sqlite.SQLiteProcessor('test.db', 'experiments'))
 
-table = db['newtable']
-
-# bulk insert
-db.begin()
-
-for x in i:
-  # find the next experimental result
-  found = x.group(0)
-
-  # remove STATS tags
-  notags = re.sub(statspat, '', found)
-
-  # remove mpi logging node ids
-  noids = re.sub(frontpat, '', notags)
-
-  # json doesn't allow trailing comma
-  notrailing = re.sub(lastcomma, '}', noids)
-
-  asdict = json.loads(notrailing)
-  table.insert(asdict)
-
-db.commit()
