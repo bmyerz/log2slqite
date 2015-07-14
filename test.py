@@ -35,5 +35,5 @@ logstr = """
         """
 
 log2sqlite.run(logstr, log2sqlite.GrappaLogParser(),
-               log2sqlite.SQLiteProcessor('test.db', 'experiments'))
+               log2sqlite.SQLiteProcessor('test/test.db', 'experiments'))
 
