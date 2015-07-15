@@ -1,6 +1,7 @@
 import re
 import sys
 import json
+import itertools
 import argparse
 import dataset
 import json
@@ -15,28 +16,40 @@ class Parser(object):
 
 
 class GrappaLogParser(Parser):
-    _runpat = re.compile(r'STATS{[^}]+}STATS')
+    _paramjsonpat = re.compile(r'PARAMS{[^}]+}PARAMS')
+    _statjsonpat = re.compile(r'STATS{[^}]+}STATS')
     _frontpat = re.compile(r'00:')
     _statspat = re.compile(r'STATS')
+    _paramspat = re.compile(r'PARAMS')
     _lastcomma = re.compile(r',[^,}]+}')
 
+    @classmethod
+    def _raw_to_dict(cls, raw, tagpattern):
+        # find the next experimental result
+        found = raw.group(0)
+
+        # remove STATS tags
+        notags = re.sub(tagpattern, '', found)
+
+        # remove mpi logging node ids
+        noids = re.sub(cls._frontpat, '', notags)
+
+        # json doesn't allow trailing comma
+        notrailing = re.sub(cls._lastcomma, '}', noids)
+
+        asdict = json.loads(notrailing)
+        return asdict
+
     def recorditer(self, inputstr):
-        for r in re.finditer(self._runpat, inputstr):
-            # find the next experimental result
-            found = r.group(0)
+        # concurrently search for adjacent pairs of PARAMS and STATS
+        for praw, sraw in itertools.izip(
+                re.finditer(self._paramjsonpat, inputstr),
+                re.finditer(self._statjsonpat, inputstr)):
 
-            # remove STATS tags
-            notags = re.sub(self._statspat, '', found)
-
-            # remove mpi logging node ids
-            noids = re.sub(self._frontpat, '', notags)
-
-            # json doesn't allow trailing comma
-            notrailing = re.sub(self._lastcomma, '}', noids)
-
-            asdict = json.loads(notrailing)
-
-            yield asdict
+            result = {}
+            result.update(self._raw_to_dict(praw, self._paramspat))
+            result.update(self._raw_to_dict(sraw, self._statspat))
+            yield result
 
 
 class Processor(object):

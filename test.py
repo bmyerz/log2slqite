@@ -1,6 +1,11 @@
 import log2sqlite
 
 logstr = """
+    00: PARAMS{
+      00:   "nnode": 8,
+      00:   "ppn": 12,
+      00:
+      00: }PARAMS
     00: STATS{
       00:   "app_1_gce_incomplete": 0,
       00:   "app_2_gce_incomplete": 0,
@@ -16,6 +21,12 @@ logstr = """
       00:   "emit_count": 4,
       00:
       00: }STATS
+
+    00: PARAMS{
+      00:   "nnode": 4,
+      00:   "ppn": 6,
+      00:
+      00: }PARAMS
 
       00: STATS{
         00:   "app_1_gce_incomplete": 0,
