@@ -12,7 +12,7 @@ cmd_template = """{0} \
                         2>&1""".format(grappa_srun)
 
 for trial in [1, 2, 3, 4]:
-    for qn in [1, 2, 3]:
+    for qn in [1,2,3]:
         params = {
             'exe': "grappa_tpc_q{0}.exe".format(qn),
             'sf': 10,
@@ -20,10 +20,11 @@ for trial in [1, 2, 3, 4]:
             'nnode': 8,
             'query': 'q{0}'.format(qn),
             'trial': trial,
+            'vtag': 'v1'
         }
 
         paramsjson = json.dumps(params)
         print "PARAMS{0}PARAMS".format(paramsjson)
 
-        cmd = cmd_template.format(params)
-        subprocess.check_call(cmd, stderr=sys.stdout)
+        cmd = cmd_template.format(**params)
+        subprocess.check_call(cmd, shell=True)
