@@ -23,6 +23,9 @@ class GrappaLogParser(Parser):
     _paramspat = re.compile(r'PARAMS')
     _lastcomma = re.compile(r',[^,}]+}')
 
+    def __init__(self, includes_params=True):
+        self.includes_params = includes_params
+
     @classmethod
     def _raw_to_dict(cls, raw, tagpattern):
         # find the next experimental result
@@ -41,15 +44,23 @@ class GrappaLogParser(Parser):
         return asdict
 
     def recorditer(self, inputstr):
-        # concurrently search for adjacent pairs of PARAMS and STATS
-        for praw, sraw in itertools.izip(
-                re.finditer(self._paramjsonpat, inputstr),
-                re.finditer(self._statjsonpat, inputstr)):
+        if self.includes_params:
+            # concurrently search for adjacent pairs of PARAMS and STATS
+            for praw, sraw in itertools.izip(
+                    re.finditer(self._paramjsonpat, inputstr),
+                    re.finditer(self._statjsonpat, inputstr)):
 
-            result = {}
-            result.update(self._raw_to_dict(praw, self._paramspat))
-            result.update(self._raw_to_dict(sraw, self._statspat))
-            yield result
+                result = {}
+                result.update(self._raw_to_dict(praw, self._paramspat))
+                result.update(self._raw_to_dict(sraw, self._statspat))
+                yield result
+        else:
+            for sraw in itertools.izip(
+                    re.finditer(self._statjsonpat, inputstr)):
+
+                result = {}
+                result.update(self._raw_to_dict(sraw, self._statspat))
+                yield result
 
 
 class Processor(object):
