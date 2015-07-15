@@ -56,15 +56,11 @@ class SQLiteProcessor(Processor):
         self.db = dataset.connect('sqlite:///{0}'.format(dbname))
         self.table = self.db[tablename]
 
-        # bulk insert
-        self.db.begin()
-
     def processrecord(self, record):
         self.table.insert(record)
 
     def close(self):
-        # end bul insert
-        self.db.commit()
+        pass
 
 
 def run(inputstr, parser, processor):
