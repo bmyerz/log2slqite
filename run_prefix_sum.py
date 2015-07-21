@@ -27,5 +27,5 @@ for trial in [1, 2, 3]:
         paramsjson = json.dumps(params)
         print "PARAMS{0}PARAMS".format(paramsjson)
 
-        cmd = cmd_template.format(params)
-        subprocess.check_call(cmd, stderr=sys.stdout)
+        cmd = cmd_template.format(**params)
+        subprocess.check_call(cmd, shell=True)
