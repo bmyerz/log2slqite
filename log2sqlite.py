@@ -7,6 +7,13 @@ import dataset
 import json
 from abc import abstractmethod
 
+logging = False
+def LOG(s):
+  if logging:
+    if type(s).__name__ == "str":
+      print s
+    else:
+      print str(s)
 
 class Parser(object):
 
@@ -18,10 +25,10 @@ class Parser(object):
 class GrappaLogParser(Parser):
     _paramjsonpat = re.compile(r'PARAMS{[^}]+}PARAMS')
     _statjsonpat = re.compile(r'STATS{[^}]+}STATS')
-    _frontpat = re.compile(r'00:')
+    _frontpat = re.compile(r'0+:')
     _statspat = re.compile(r'STATS')
     _paramspat = re.compile(r'PARAMS')
-    _lastcomma = re.compile(r',[^,}]+}')
+    _lastcomma = re.compile(r',[^",}]+}') # if one exists
 
     def __init__(self, includes_params=True):
         self.includes_params = includes_params
@@ -40,6 +47,7 @@ class GrappaLogParser(Parser):
         # json doesn't allow trailing comma
         notrailing = re.sub(cls._lastcomma, '}', noids)
 
+        LOG(notrailing)
         asdict = json.loads(notrailing)
         return asdict
 
@@ -79,12 +87,17 @@ class SQLiteProcessor(Processor):
     def __init__(self, dbname, tablename):
         self.db = dataset.connect('sqlite:///{0}'.format(dbname))
         self.table = self.db[tablename]
+        self.rows_to_insert = []
 
     def processrecord(self, record):
-        self.table.insert(record)
+        for k in self.table.columns:
+          if not k in record:
+            record[k] = None   # for missing columns put None
+
+        self.rows_to_insert.append(record)
 
     def close(self):
-        pass
+        self.table.insert_many(self.rows_to_insert)
 
 
 def run(inputstr, parser, processor):
@@ -102,8 +115,10 @@ if __name__ == '__main__':
     p.add_argument("-t", dest="tablename", required=True, help="table name")
     p.add_argument("-i", dest="inputf", required=True,
                    help="input log file; may contain multiple records")
+    p.add_argument("-v", dest="verbose", action="store_true", help="turn on verbose logging")
 
     args = p.parse_args(sys.argv[1:])
+    logging = args.verbose 
 
     with open(args.inputf, 'r') as inf:
         run(inf.read(),
