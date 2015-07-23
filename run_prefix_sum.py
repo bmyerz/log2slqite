@@ -1,5 +1,4 @@
 import json
-import sys
 import subprocess
 
 grappa_srun = '../../bin/grappa_srun'
@@ -29,3 +28,5 @@ for trial in [1, 2, 3]:
 
         cmd = cmd_template.format(**params)
         subprocess.check_call(cmd, shell=True)
+
+
