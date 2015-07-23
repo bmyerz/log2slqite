@@ -7,9 +7,9 @@ grappa_srun = '../../bin/grappa_srun'
 cmd_template = """{0} \
                         --ppn={{ppn}} \
                         --nnode={{nnode}} \
-                        --tuples_per_core={{tuples_per_core}} \
                         -- \
                         ./{{exe}} \
+                        --tuples_per_core={{tuples_per_core}} \
                         2>&1""".format(grappa_srun)
 
 for trial in [1, 2, 3]:
