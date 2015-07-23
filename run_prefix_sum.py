@@ -20,7 +20,7 @@ for trial in [1, 2, 3]:
             'ppn': 12,
             'nnode': 10,
             'trial': trial,
-            'tuples_per_core': 1024*1024*50,
+            'tuples_per_core': 1024*1024*10,
             'vtag': 'v3'
         }
 
