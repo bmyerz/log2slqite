@@ -1,31 +1,18 @@
-import json
-import sys
-import subprocess
+from grappa import GrappaExperiment
 
-grappa_srun = '../../bin/grappa_srun'
+# fusion
+fusion_split = GrappaExperiment({
+    'transformation': ["fused", "split"],
+    'exe': lambda transformation: "grappa_loop_prefix_sum_{0}.exe".format(
+        transformation),
+    'ppn': 12,
+    'nnode': 10,
+    'trial': range(1, 3 + 1),
+    'vtag': 'v3'
+},
+grappa_params={
+    'tuples_per_core': 1024*1024*10,
+})
 
-cmd_template = """{0} \
-                        --ppn={{ppn}} \
-                        --nnode={{nnode}} \
-                        -- \
-                        ./{{exe}} \
-                        --tuples_per_core={{tuples_per_core}} \
-                        2>&1""".format(grappa_srun)
+fusion_split.run()
 
-for trial in [1, 2, 3]:
-    for transformation in ["fused", "split"]:
-        params = {
-            'exe': "grappa_loop_prefix_sum_{0}.exe".format(transformation),
-            'transformation': transformation,
-            'ppn': 12,
-            'nnode': 10,
-            'trial': trial,
-            'tuples_per_core': 1024*1024*10,
-            'vtag': 'v3'
-        }
-
-        paramsjson = json.dumps(params)
-        print "PARAMS{0}PARAMS".format(paramsjson)
-
-        cmd = cmd_template.format(**params)
-        subprocess.check_call(cmd, shell=True)
