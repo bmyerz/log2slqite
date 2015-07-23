@@ -1,11 +1,10 @@
 import collections
-import json
 import inspect
 import subprocess
 from abc import abstractmethod
 
 
-class Experiment:
+class Experiment(object):
 
     def __init__(self, params):
         self.params_lists = params
@@ -69,44 +68,5 @@ class Experiment:
     @abstractmethod
     def cmd(self):
         pass
-
-
-class GrappaExperiment(Experiment):
-    _required = ["ppn", "nnode"]
-
-    def cmd(self):
-        grappa_srun = '../../bin/grappa_srun'
-
-        cmd_template = """{0} \
-                                --ppn={{ppn}} \
-                                --nnode={{nnode}} \
-                                --tuples_per_core={{tuples_per_core}} \
-                                -- \
-                                ./{{exe}} \
-                                2>&1""".format(grappa_srun)
-        return cmd_template
-
-    def recordparams(self, params):
-        for r in self._required:
-            if not (r in params):
-                raise Exception("require parameter {0}".format(r))
-
-        paramsjson = json.dumps(params)
-        print "PARAMS{0}PARAMS".format(paramsjson)
-
-
-# fusion
-fusion_split = GrappaExperiment({
-    'transformation': ["fused", "split"],
-    'exe': lambda transformation: "grappa_loop_prefix_sum_{0}.exe".format(
-        transformation),
-    'ppn': 12,
-    'nnode': 10,
-    'trial': range(1, 3 + 1),
-    'tuples_per_core': 1024*1024*50,
-    'vtag': 'v3'
-})
-
-fusion_split.run()
 
 
