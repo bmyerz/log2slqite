@@ -10,7 +10,12 @@ class Experiment(object):
         self.params_lists = params
 
     @staticmethod
-    def _call_with_possible_params(f, p, name=None):
+    def _call_with_relevant_params(f, p, name=None):
+        """
+        Given a function and a superset of parameter
+        bindings, call the function on its named parameters
+        """
+
         # find the relevant named parameters
         argnames = set(inspect.getargspec(f).args)
 
@@ -21,11 +26,16 @@ class Experiment(object):
             raise Exception("Resolving {0} without parameters {1}".format(
                 name, set(argnames) - set(dused)))
 
-        # evaluate
+        # apply f
         return f(**dused)
 
     @staticmethod
     def _enumerate_experiments(d, keys, depth=0):
+        """
+        Given parameters and lists of assignments,
+        return the crossproduct of all parameter assignments
+        """
+
         if len(keys) == 0:
             yield {}
         else:
@@ -48,7 +58,7 @@ class Experiment(object):
                         for ak, av in params_assigned.items():
                             if isinstance(av, type(lambda x: x)):
                                 resolved_val = \
-                                    Experiment._call_with_possible_params(av, params_assigned, ak)
+                                    Experiment._call_with_relevant_params(av, params_assigned, ak)
 
                                 # replace the function with application
                                 params_assigned[ak] = resolved_val
@@ -63,10 +73,16 @@ class Experiment(object):
 
     @abstractmethod
     def recordparams(self, params):
+        """
+        Record the parameter assignments in experimental logs.
+        """
         pass
 
     @abstractmethod
     def cmd(self):
+        """
+        Return the cmd template, which will be filled in with parameters
+        """
         pass
 
 

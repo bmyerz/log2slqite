@@ -6,6 +6,7 @@ class GrappaExperiment(Experiment):
     _required = ["ppn", "nnode"]
 
     def __init__(self, params, grappa_params={}):
+        # grappa_params are command line arguments
         self.grappa_param_names = grappa_params.keys()
         all_params = {}
         all_params.update(params)
