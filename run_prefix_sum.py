@@ -11,9 +11,8 @@ fusion_split = GrappaExperiment({
     'vtag': 'v3'
 },
 grappa_params={
-    'tuples_per_core': 1024*1024*50,
+    'tuples_per_core': 1024*1024*10,
 })
 
 fusion_split.run()
-
 
