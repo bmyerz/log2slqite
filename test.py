@@ -1,3 +1,4 @@
+from grappa_parser import GrappaLogParser
 import log2sqlite
 
 logstr = """
@@ -45,6 +46,6 @@ logstr = """
         00: }STATS
         """
 
-log2sqlite.run(logstr, log2sqlite.GrappaLogParser(),
+log2sqlite.run(logstr, GrappaLogParser(),
                log2sqlite.SQLiteProcessor('test/test.db', 'experiments'))
 
