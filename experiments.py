@@ -53,18 +53,19 @@ class Experiment(object):
                 for rest_assigned in Experiment._enumerate_experiments(d, rest, depth+1):
                     params_assigned.update(rest_assigned)
 
+                    params_assigned_copy = params_assigned.copy()
                     if depth == 0:
                         # now that all keys are assigned
                         # we can resolve dependent ones
-                        for ak, av in params_assigned.items():
+                        for ak, av in params_assigned_copy.items():
                             if isinstance(av, type(lambda x: x)):
                                 resolved_val = \
-                                    Experiment._call_with_relevant_params(av, params_assigned, ak)
+                                    Experiment._call_with_relevant_params(av, params_assigned_copy, ak)
 
                                 # replace the function with application
-                                params_assigned[ak] = resolved_val
+                                params_assigned_copy[ak] = resolved_val
 
-                    yield params_assigned
+                    yield params_assigned_copy
 
     def run(self):
         for params in self._enumerate_experiments(
