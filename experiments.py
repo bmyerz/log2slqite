@@ -69,6 +69,7 @@ class Experiment(object):
         for params in self._enumerate_experiments(
                 self.params_lists, self.params_lists.keys()):
             c = self.cmd().format(**params)
+            self.recordparams(params)
             subprocess.check_call(c, shell=True)
 
     @abstractmethod
