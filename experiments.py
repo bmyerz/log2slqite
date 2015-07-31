@@ -43,7 +43,8 @@ class Experiment(object):
             vals = d[k]
 
             # make sure everything is a list of values
-            if not isinstance(vals, collections.Iterable):
+            if not isinstance(vals, collections.Iterable) \
+                    or isinstance(vals, str):
                 vals = [vals]
 
             for v in vals:
