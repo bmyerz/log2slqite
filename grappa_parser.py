@@ -55,4 +55,5 @@ class GrappaLogParser(Parser):
                 yield result
 
 
-cli(GrappaLogParser())
+if __name__ == '__main__':
+    cli(GrappaLogParser())
