@@ -5,24 +5,24 @@ from log2sqlite import Parser, cli
 class ImpalaLogParser(Parser):
 
     def recorditer(self, inputstr):
-        querypat = r'Running Impala query: (q\d+)[_a-z]+'
-        timepat = r'Time:(\d+[.]\d+)'
-        secondpat = r'and a second time: (q\d+)'
+        querypat = re.compile(r'Running query: (?P<query>q\d+)[_a-z]+\nTime:(?P<preptime>\d+[.]\d+)\nTime:(?P<runtime1>\d+[.]\d+)\nTime:(?P<runtime2>\d+[.]\d+)\n(?P<failmsg>(ABOVE QUERY FAILED:1)?)')
 
         for m in re.finditer(querypat, inputstr):
-            r = {'machine': 'bigdata', 'nnode': 16 } # hardcoded params
+            # hardcoded params
+            r = {'machine': 'bigdata',
+                 'system': 'impala',
+                 'nnode': 16
+            }
 
-            r['query'] = m.group(1)
-            mt = re.search(timepat, inputstr[m.end():])
-            r['runtime1'] = mt.group(1)
-            ms = re.search(secondpat, inputstr[mt.end():])
-            assert r['query'] == ms.group(1), \
-                "First and second runs are not the same query {0} {1}".format(
-                    r['query'], ms.group(1)
-                )
-            mt2 = re.search(timepat, inputstr[ms.end():])
-            r['runtime2'] = mt2.group(1)
+            for k in ['query', 'runtime1', 'runtime2']:
+                r[k] = m.group(k)
+
+            if m.group('failmsg') != '':
+                print "failed query {0}; not saving".format(r['query'])
+                continue
+
             yield r
 
 
-cli(ImpalaLogParser())
+if __name__ == '__main__':
+    cli(ImpalaLogParser())
