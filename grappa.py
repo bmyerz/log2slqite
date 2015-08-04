@@ -17,7 +17,7 @@ class GrappaExperiment(Experiment):
         clargs_template = '--{name}={{{name}}}'
         clargs = ' '.join([clargs_template.format(name=n) for n in self.grappa_param_names])
 
-        cmd_template = self.__cmd_template().format(clargs=clargs)
+        cmd_template = self._cmd_template().format(clargs=clargs)
 
         return cmd_template
 
