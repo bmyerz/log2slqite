@@ -29,7 +29,7 @@ class GrappaExperiment(Experiment):
         paramsjson = json.dumps(params)
         print "PARAMS{0}PARAMS".format(paramsjson)
 
-    def __cmd_template(self):
+    def _cmd_template(self):
         return """../../bin/grappa_srun \
                                 --ppn={{ppn}} \
                                 --nnode={{nnode}} \
@@ -42,7 +42,7 @@ class GrappaExperiment(Experiment):
 class MPIRunGrappaExperiment(GrappaExperiment):
     _required = ["np"]
 
-    def __cmd_template(self):
+    def _cmd_template(self):
         return """mpirun \
                      --hostfile=hadoop.hosts \
                      -np {{np}}
