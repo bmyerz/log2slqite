@@ -1,18 +1,7 @@
 from grappa import GrappaExperiment
 
 # tpch
-tpch = GrappaExperiment({
-    'trial': range(1, 3 + 1),
-    'qn': range(1, 3 + 1),
-    'exe': lambda qn: "grappa_tpc_q{0}.exe".format(qn),
-    'sf': 10,
-    'ppn': 12,
-    'nnode': 8,
-    'query': lambda qn: 'q{0}'.format(qn),
-    'vtag': 'v1'
-})
-
-tpch = GrappaExperiment({
+tpch_sampa = GrappaExperiment({
     'trial': range(1, 3 + 1),
     'qn': range(1, 22 + 1),
     'exe': lambda qn: "grappa_tpc_q{0}.exe".format(qn),
@@ -28,7 +17,7 @@ tpch = GrappaExperiment({
     })
 
 
-tpch = GrappaExperiment({
+tpch_pal = GrappaExperiment({
     'trial': range(1, 3 + 1),
     'qn': range(1, 22 + 1),
     'exe': lambda qn: "grappa_tpc_q{0}.exe".format(qn),
@@ -43,4 +32,4 @@ tpch = GrappaExperiment({
     'shared_pool_memory_fraction': 0.5
     })
 
-tpch.run()
+tpch_pal.run()
