@@ -38,17 +38,16 @@ class SQLiteProcessor(Processor):
     def __init__(self, dbname, tablename):
         self.db = dataset.connect('sqlite:///{0}'.format(dbname))
         self.table = self.db[tablename]
-        self.rows_to_insert = []
 
     def processrecord(self, record):
         for k in self.table.columns:
           if not k in record:
             record[k] = None   # for missing columns put None
 
-        self.rows_to_insert.append(record)
+        self.table.insert(record)
 
     def close(self):
-        self.table.insert_many(self.rows_to_insert)
+        pass
 
 
 def run(inputstr, parser, processor):
