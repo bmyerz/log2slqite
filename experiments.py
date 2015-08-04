@@ -67,12 +67,15 @@ class Experiment(object):
 
                     yield params_assigned_copy
 
-    def run(self):
+    def run(self, dryrun=False):
         for params in self._enumerate_experiments(
                 self.params_lists, self.params_lists.keys()):
             c = self.cmd().format(**params)
             try:
-                subprocess.check_call(c, shell=True)
+                if dryrun:
+                    print c
+                else:
+                    subprocess.check_call(c, shell=True)
                 self.recordparams(params)
             except subprocess.CalledProcessError as e:
                 print e
