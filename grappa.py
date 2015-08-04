@@ -30,7 +30,7 @@ class GrappaExperiment(Experiment):
         print "PARAMS{0}PARAMS".format(paramsjson)
 
     def __cmd_template(self):
-        return """../../grappa_srun \
+        return """../../bin/grappa_srun \
                                 --ppn={{ppn}} \
                                 --nnode={{nnode}} \
                                 -- \
