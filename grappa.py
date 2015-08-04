@@ -14,18 +14,11 @@ class GrappaExperiment(Experiment):
         super(GrappaExperiment, self).__init__(all_params)
 
     def cmd(self):
-        grappa_srun = '../../bin/grappa_srun'
-
         clargs_template = '--{name}={{{name}}}'
         clargs = ' '.join([clargs_template.format(name=n) for n in self.grappa_param_names])
 
-        cmd_template = """{0} \
-                                --ppn={{ppn}} \
-                                --nnode={{nnode}} \
-                                -- \
-                                ./{{exe}} \
-                                {1} \
-                                2>&1""".format(grappa_srun, clargs)
+        cmd_template = self.__cmd_template().format(clargs=clargs)
+
         return cmd_template
 
     def recordparams(self, params):
@@ -36,4 +29,23 @@ class GrappaExperiment(Experiment):
         paramsjson = json.dumps(params)
         print "PARAMS{0}PARAMS".format(paramsjson)
 
+    def __cmd_template(self):
+        return """../../grappa_srun \
+                                --ppn={{ppn}} \
+                                --nnode={{nnode}} \
+                                -- \
+                                ./{{exe}} \
+                                {clargs} \
+                                2>&1"""
 
+
+class MPIRunGrappaExperiment(GrappaExperiment):
+    _required = ["np"]
+
+    def __cmd_template(self):
+        return """mpirun \
+                     --hostfile=hadoop.hosts \
+                     -np {{np}}
+                     ./{{exe}} \
+                     {clargs} \
+                     2>&1"""
