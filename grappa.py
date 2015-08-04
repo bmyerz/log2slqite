@@ -44,8 +44,8 @@ class MPIRunGrappaExperiment(GrappaExperiment):
 
     def _cmd_template(self):
         return """mpirun \
-                     --hostfile=hadoop.hosts \
-                     -np {{np}}
+                     --hostfile /people/bdmyers/hadoop.hosts \
+                     -np {{np}} \
                      ./{{exe}} \
                      {clargs} \
                      2>&1"""
