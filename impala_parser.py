@@ -14,7 +14,7 @@ class ImpalaLogParser(Parser):
                  'nnode': 16
             }
 
-            for k in ['query', 'runtime1', 'runtime2']:
+            for k in ['query', 'runtime1', 'runtime2', 'preptime']:
                 r[k] = m.group(k)
 
             if m.group('failmsg') != '':
