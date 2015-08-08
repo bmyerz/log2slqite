@@ -1,5 +1,6 @@
 import json
 from experiments import Experiment
+import sys
 
 
 class GrappaExperiment(Experiment):
@@ -28,6 +29,7 @@ class GrappaExperiment(Experiment):
 
         paramsjson = json.dumps(params)
         print "PARAMS{0}PARAMS".format(paramsjson)
+        sys.stdout.flush()
 
     def _cmd_template(self):
         return """../../bin/grappa_srun \
