@@ -2,8 +2,7 @@ from grappa import GrappaExperiment, MPIRunGrappaExperiment
 
 tpch_iter_bigdatann = MPIRunGrappaExperiment({
                                 'trial': range(1, 3 + 1),
-                                #'qn': range(1, 22 + 1),
-                                'qn': [6,11,12,14,15,17,19],
+                                'qn': range(1, 22 + 1),
                                 'exe': lambda qn: "grappa_tpc_iter_q{0}.exe".format(qn),
                                 'sf': 10,
                                 'ppn': 16,
