@@ -44,10 +44,14 @@ class GrappaExperiment(Experiment):
 class MPIRunGrappaExperiment(GrappaExperiment):
     _required = ["np"]
 
+    def __init__(self, *args, **kwargs):
+        self.hostfile = kwargs.get('hostfile', '/people/bdmyers/hadoop.hosts')
+        super(MPIRunGrappaExperiment, self).__init__(*args)
+
     def _cmd_template(self):
         return """mpirun \
-                     --hostfile /people/bdmyers/hadoop.hosts \
+                     --hostfile {hostfile} \
                      -np {{np}} \
                      ./{{exe}} \
                      {clargs} \
-                     2>&1"""
+                     2>&1""".format(hostfile=self.hostfile)
