@@ -7,6 +7,7 @@ class GrappaExperiment(Experiment):
     _required = ["ppn", "nnode"]
 
     def __init__(self, params, grappa_params={}, setup=None, teardown=None):
+
         # grappa_params are command line arguments
         self.grappa_param_names = grappa_params.keys()
         all_params = {}
@@ -52,7 +53,15 @@ class GrappaExperiment(Experiment):
 class MPIRunGrappaExperiment(GrappaExperiment):
     _required = ["np"]
 
-    def __init__(self, params, grappa_params, setup=None, teardown=None):
+    def __init__(self, params, grappa_params, setup=None, teardown=None, timeout=None):
+        """
+        :param params: (see GrappaExperiment)
+        :param grappa_params: (see GrappaExperiment)
+        :param setup: (see GrappaExperiment)
+        :param teardown: (see GrappaExperiment)
+        :param timeout: how long to run experiment before killing it, e.g. 15m
+        """
+        self.timeout = timeout
         if 'hostfile' not in params:
             params['hostfile'] = '/people/bdmyers/hadoop.hosts'
             print "Using default hostfile {0}".format(params['hostfile'])
@@ -65,7 +74,11 @@ class MPIRunGrappaExperiment(GrappaExperiment):
             teardown)
 
     def _cmd_template(self):
-        return """mpirun \
+        if self.timeout is not None:
+            timeout_str = "timeout {} ".format(self.timeout)
+        else:
+            timeout_str = ""
+        return timeout_str + """mpirun \
                      --hostfile {{hostfile}} \
                      -np {{np}} \
                      ./{{exe}} \
