@@ -6,12 +6,14 @@ import sys
 class GrappaExperiment(Experiment):
     _required = ["ppn", "nnode"]
 
-    def __init__(self, params, grappa_params={}):
+    def __init__(self, params, grappa_params={}, setup=None, teardown=None):
         # grappa_params are command line arguments
         self.grappa_param_names = grappa_params.keys()
         all_params = {}
         all_params.update(params)
         all_params.update(grappa_params)
+	self.setup = setup
+	self.teardown = teardown
         super(GrappaExperiment, self).__init__(all_params)
 
     def cmd(self):
@@ -20,7 +22,12 @@ class GrappaExperiment(Experiment):
 
         cmd_template = self._cmd_template().format(clargs=clargs)
 
-        return cmd_template
+	if self.setup is not None:
+		cmd_template = self.setup + '; ' + cmd_template
+	if self.teardown is not None:
+		cmd_template = cmd_template + '; ' + self.teardown
+
+	return cmd_template
 
     def recordparams(self, params):
         for r in self._required:
@@ -44,14 +51,16 @@ class GrappaExperiment(Experiment):
 class MPIRunGrappaExperiment(GrappaExperiment):
     _required = ["np"]
 
-    def __init__(self, *args, **kwargs):
-        self.hostfile = kwargs.get('hostfile', '/people/bdmyers/hadoop.hosts')
-        super(MPIRunGrappaExperiment, self).__init__(*args)
+    def __init__(self, params, grappa_params, setup=None, teardown=None):
+	if 'hostfile' not in params:
+		params['hostfile'] = '/people/bdmyers/hadoop.hosts'
+		print "Using default hostfile {0}".format(params['hostfile'])
+        super(MPIRunGrappaExperiment, self).__init__(params, grappa_params, setup, teardown)
 
     def _cmd_template(self):
         return """mpirun \
-                     --hostfile {hostfile} \
+                     --hostfile {{hostfile}} \
                      -np {{np}} \
                      ./{{exe}} \
                      {clargs} \
-                     2>&1""".format(hostfile=self.hostfile)
+                     2>&1"""
