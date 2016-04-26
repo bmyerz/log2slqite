@@ -7,13 +7,16 @@ mm_datasets = ['random_N_{0}_r_{1}.matrix.dat'.format(sp, si)
     'soc-Pokec.matrix.dat',
     'web-BerkStan.matrix.dat',
     'web-Stanford.matrix.dat']
+mm_datasets.remove('random_N_{0}_r_{1}.matrix.dat'.format('20k',1.6))
+mm_datasets.remove('random_N_{0}_r_{1}.matrix.dat'.format('50k',1.5))
+mm_datasets.remove('random_N_{0}_r_{1}.matrix.dat'.format('50k',1.6))
 
 undir_datasets = ['undirNet_{0}_sm.matrix.dat'.format(s)
                   for s in [1000]]
 
 mm_expers = MPIRunGrappaExperiment({
                                 'trial': range(1, 3 + 1),
-                                'query': ['sparseMatMultQuery_MyriaL', 'threeSparseMatMultQuery_MyriaL'],
+                                'query': ['grappa_sparseMatMultQuery_MyriaL', 'grappa_threeSparseMatMultQuery_MyriaL'],
                                 'exe': lambda query: "{0}.exe".format(query),
                                 'ppn': 4,
                                 'nnode': 16,
@@ -21,16 +24,20 @@ mm_expers = MPIRunGrappaExperiment({
                                 'vtag': 'v0',
                                 'machine': 'r3.xlarge',
                                 'system': 'radish',
+				'hostfile': '~/hostfile'
                             },
                             {
                                 #'shared_pool_memory_fraction': 0.5,
                                 'input_file_matrix': mm_datasets
                             },
-                            hostfile='/etc/hosts')
+			
+	"cp ~/data2/{input_file_matrix}.bin ~/data; sleep 1",
+	"rm ~/data/{input_file_matrix}.bin"
+)
 
 undir_exps = MP = MPIRunGrappaExperiment({
     'trial': range(1, 3 + 1),
-    'query': ['MCL_MyriaL'],
+    'query': ['grappa_MCL_MyriaL'],
     'exe': lambda query: "{0}.exe".format(query),
     'ppn': 4,
     'nnode': 16,
@@ -38,12 +45,15 @@ undir_exps = MP = MPIRunGrappaExperiment({
     'vtag': 'v0',
     'machine': 'r3.xlarge',
     'system': 'radish',
+    'hostfile': '~/hostfile'
 },
     {
         #'shared_pool_memory_fraction': 0.5,
-        'input_file_matrix': undir_datasets
+        'input_file_graph': undir_datasets
     },
-    hostfile='/etc/hosts')
+	"cp ~/data2/{{input_file_graph}}.bin ~/data; sleep 1",
+	"rm ~/data/{{input_file_graph}}.bin"
+)
 
 mm_expers.run()
 undir_exps.run()
