@@ -32,7 +32,8 @@ mm_expers = MPIRunGrappaExperiment({
 },
 
     "cp ~/data2/{input_file_matrix}.bin ~/data; sleep 1",
-    "rm ~/data/{input_file_matrix}.bin"
+    "rm ~/data/{input_file_matrix}.bin",
+	timeout='15m'
 )
 
 undir_exps = MP = MPIRunGrappaExperiment({
@@ -51,8 +52,9 @@ undir_exps = MP = MPIRunGrappaExperiment({
         #'shared_pool_memory_fraction': 0.5,
         'input_file_graph': undir_datasets
 },
-    "cp ~/data2/{{input_file_graph}}.bin ~/data; sleep 1",
-    "rm ~/data/{{input_file_graph}}.bin"
+    "cp ~/data2/{input_file_graph}.bin ~/data; sleep 1",
+    "rm ~/data/{input_file_graph}.bin",
+    timeout='15m'
 )
 
 mm_expers.run()
