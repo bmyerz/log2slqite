@@ -1,8 +1,8 @@
 from experiments import Experiment
-from parameters import JSONParams, RequiredParams
+from parameters import ParameterUtils
 
 
-class GrappaExperiment(RequiredParams, JSONParams, Experiment):
+class GrappaExperiment(Experiment):
     _required = ["ppn", "nnode"]
 
     def __init__(self, params, grappa_params={}, setup=None, teardown=None):
@@ -29,6 +29,10 @@ class GrappaExperiment(RequiredParams, JSONParams, Experiment):
             cmd_template = cmd_template + '; ' + self.teardown
 
         return cmd_template
+
+    def recordparams(self, params):
+        ParameterUtils.require_params(self._required, params)
+        ParameterUtils.print_params_as_json(params)
 
     def _cmd_template(self):
         return """../../bin/grappa_srun \
