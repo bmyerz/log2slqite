@@ -16,6 +16,8 @@ mapping parameter names to parameter values. A parameter's value can be a single
 a list of values, or a function to produce a value. log2sqlite takes the product of all
 parameter values to enumerate a list of experiments.
 
+See examples in the `projects/` directory.
+
 ## Parsing log files to store in sqlite
 
 ### Setup
