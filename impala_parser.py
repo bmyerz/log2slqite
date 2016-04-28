@@ -1,5 +1,6 @@
 import re
-from log2sqlite import Parser, cli
+from parser import Parser
+from log2sqlite import cli
 
 
 class ImpalaLogParser(Parser):

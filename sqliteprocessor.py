@@ -1,4 +1,5 @@
-from log2sqlite import Processor
+from parser import Processor
+import dataset
 
 
 class SQLiteProcessor(Processor):

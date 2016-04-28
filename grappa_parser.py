@@ -1,5 +1,6 @@
 import itertools
-from log2sqlite import Parser, cli
+from parser import Parser
+from log2sqlite import cli
 from parameters import JSONParamsParser, PARAMS_TAG
 
 __author__ = 'brandon'

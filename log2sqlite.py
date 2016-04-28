@@ -1,8 +1,8 @@
 import argparse
 import sys
-from abc import abstractmethod
 
 from sqliteprocessor import SQLiteProcessor
+
 
 logging = False
 
@@ -13,24 +13,6 @@ def LOG(s):
             print s
         else:
             print str(s)
-
-
-class Parser(object):
-
-    @abstractmethod
-    def recorditer(self, inputstr):
-        pass
-
-
-class Processor(object):
-
-    @abstractmethod
-    def processrecord(self, record):
-        pass
-
-    @abstractmethod
-    def close(self):
-        pass
 
 
 def run(inputstr, parser, processor):
