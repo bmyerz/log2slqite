@@ -36,6 +36,15 @@ You can set these parameters by:
 The only restriction is that the function you give as the parameter value
 must have arguments that are other parameter names. 
 
+### Skip over existing experiments
+
+You can skip experiments that you already have results for. This is useful
+when your experiments crashed and you need to resume where you left off
+without redoing experiments that succeeded. To do so, just pass the
+records for experiments you want to skip. You can get this list
+of records from anywhere, but one nice method is to just recycle your
+log parser (see below!).
+
 ## Parsing log files to store in sqlite
 
 ### Setup
