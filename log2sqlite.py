@@ -2,8 +2,6 @@ import argparse
 import sys
 import common
 
-from sqliteprocessor import SQLiteProcessor
-
 
 def run(inputstr, parser, processor):
     count = 0
@@ -25,6 +23,9 @@ def cli(parser):
 
     args = p.parse_args(sys.argv[1:])
     common.logging = args.verbose
+
+    # only depend on this if we are actually running cli
+    from sqliteprocessor import SQLiteProcessor
 
     with open(args.inputf, 'r') as inf:
         run(inf.read(),
