@@ -67,9 +67,23 @@ class Experiment(object):
 
                     yield params_assigned_copy
 
-    def run(self, dryrun=False):
+    def run(self, dryrun=False, records=[]):
+        # process optional logs of existing experimental results
+        # so that we can skip those experiments
+        existing_results = set()
+        param_keys = self.params_lists.keys()
+        for r in records:
+            params_only_r = {k: r[k] for k in r if k in param_keys}
+            existing_results.add(params_only_r)
+
         for params in self._enumerate_experiments(
                 self.params_lists, self.params_lists.keys()):
+
+            # skip if we've run it previously
+            if params in existing_results:
+                print "SKIPPING ", params
+                continue
+
             c = self.cmd().format(**params)
             try:
                 if dryrun:

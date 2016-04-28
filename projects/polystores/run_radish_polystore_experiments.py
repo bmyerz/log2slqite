@@ -1,5 +1,6 @@
 from grappa import MPIRunGrappaExperiment
 from itertools import product
+from grappa_parser import GrappaLogParser
 
 mm_datasets = ['random_N_{0}_r_{1}.matrix.dat'.format(sp, si)
                for (sp, si) in product(['10k', '20k', '50k'],
@@ -13,6 +14,9 @@ mm_datasets.remove('random_N_{0}_r_{1}.matrix.dat'.format('50k', 1.6))
 
 undir_datasets = ['undirNet_{0}_sm.matrix.dat'.format(s)
                   for s in [1000]]
+
+with open("~/results/polystore_exps.log") as f:
+    existing_logs = f.read()
 
 mm_expers = MPIRunGrappaExperiment({
     'trial': range(1, 3 + 1),
@@ -32,7 +36,8 @@ mm_expers = MPIRunGrappaExperiment({
 },
 
     "cp ~/data2/{input_file_matrix}.bin ~/data; sleep 1",
-    "rm ~/data/{input_file_matrix}.bin"
+    "rm ~/data/{input_file_matrix}.bin",
+    GrappaLogParser().recorditer(existing_logs)
 )
 
 undir_exps = MP = MPIRunGrappaExperiment({
@@ -52,7 +57,8 @@ undir_exps = MP = MPIRunGrappaExperiment({
         'input_file_graph': undir_datasets
 },
     "cp ~/data2/{{input_file_graph}}.bin ~/data; sleep 1",
-    "rm ~/data/{{input_file_graph}}.bin"
+    "rm ~/data/{{input_file_graph}}.bin",
+    GrappaLogParser().recorditer(existing_logs)
 )
 
 mm_expers.run()
