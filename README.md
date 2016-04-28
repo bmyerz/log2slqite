@@ -18,6 +18,24 @@ parameter values to enumerate a list of experiments.
 
 See examples in the `projects/` directory.
 
+### Use one parameter to set another
+
+You can make parameter values depend on others. This is super useful in a lot of
+situations. For example, imagine you have a parameter `scale`, valued 1, 10, 100, and
+corresponding input files `data_scale_1`, `data_scale_10`, `data_scale_100`. 
+You can set these parameters by:
+
+```python
+{...
+  scale: [1, 10, 100],
+  inputfile: lambda scale: "data_scale_{}".format(scale)
+  ...
+}
+```
+
+The only restriction is that the function you give as the parameter value
+must have arguments that are other parameter names. 
+
 ## Parsing log files to store in sqlite
 
 ### Setup
