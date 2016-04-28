@@ -32,6 +32,9 @@ class JSONParamsParser(object):
         self._taggedjsonpat = re.compile(r'TAG{[^}]+}TAG'.replace('TAG', tag))
         self._tagpat = re.compile(r'TAG'.replace('TAG', tag))
 
+    def count(self, input_str):
+        return len(re.findall(self._taggedjsonpat, input_str))
+
     def idict_from_json(self, input_str):
         for raw in re.finditer(self._taggedjsonpat, input_str):
             yield self._raw_to_dict(raw)
