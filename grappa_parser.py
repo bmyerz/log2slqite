@@ -15,6 +15,9 @@ class GrappaLogParser(Parser):
         sparams = JSONParamsParser('STATS')
 
         if self.includes_params:
+            assert jparams.count(inputstr) == sparams.count(inputstr), \
+                "different numbers of STATS and PARAMS; " \
+                "check your log file for errors"
             # concurrently search for adjacent pairs of PARAMS and STATS
             for pdict, sdict in itertools.izip(
                 jparams.idict_from_json(inputstr),
