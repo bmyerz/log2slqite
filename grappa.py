@@ -69,7 +69,8 @@ class MPIRunGrappaExperiment(GrappaExperiment):
 
     def _cmd_template(self):
         if self.timeout is not None:
-            timeout_str = "timeout {} ".format(self.timeout)
+	    # use -k so because sometimes mpirun wants 2 signals
+            timeout_str = "timeout -k 5s {} ".format(self.timeout)
         else:
             timeout_str = ""
         return timeout_str + """mpirun \
