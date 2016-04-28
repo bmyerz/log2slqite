@@ -2,7 +2,7 @@ import collections
 import inspect
 import subprocess
 from abc import abstractmethod
-
+from collections import OrderedDict
 
 class Experiment(object):
 
@@ -74,13 +74,15 @@ class Experiment(object):
         param_keys = self.params_lists.keys()
         for r in records:
             params_only_r = {k: r[k] for k in r if k in param_keys}
-            existing_results.add(params_only_r)
+            # to make a dictionary hashable we must convert it
+            # to a frozenset of (k, v) tuples
+            existing_results.add(frozenset(params_only_r.items()))
 
         for params in self._enumerate_experiments(
                 self.params_lists, self.params_lists.keys()):
 
             # skip if we've run it previously
-            if params in existing_results:
+            if frozenset(params.items()) in existing_results:
                 print "SKIPPING ", params
                 continue
 
