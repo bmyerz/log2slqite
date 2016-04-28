@@ -1,18 +1,8 @@
 import argparse
 import sys
+import common
 
 from sqliteprocessor import SQLiteProcessor
-
-
-logging = False
-
-
-def LOG(s):
-    if logging:
-        if type(s).__name__ == "str":
-            print s
-        else:
-            print str(s)
 
 
 def run(inputstr, parser, processor):
@@ -34,7 +24,7 @@ def cli(parser):
     p.add_argument("-v", dest="verbose", action="store_true", help="turn on verbose logging")
 
     args = p.parse_args(sys.argv[1:])
-    logging = args.verbose
+    common.logging = args.verbose
 
     with open(args.inputf, 'r') as inf:
         run(inf.read(),

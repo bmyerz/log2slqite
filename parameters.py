@@ -1,8 +1,7 @@
 import sys
 import json
 import re
-from log2sqlite import LOG
-
+from common import LOG
 
 PARAMS_TAG = 'PARAMS'
 
