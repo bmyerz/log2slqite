@@ -6,9 +6,10 @@ import sys
 class GrappaExperiment(Experiment):
     _required = ["ppn", "nnode"]
 
-    def __init__(self, params, grappa_params={}):
+    def __init__(self, params, grappa_params={}, srun_settings={}):
         # grappa_params are command line arguments
         self.grappa_param_names = grappa_params.keys()
+        self.srun_settings = srun_settings
         all_params = {}
         all_params.update(params)
         all_params.update(grappa_params)
@@ -18,7 +19,10 @@ class GrappaExperiment(Experiment):
         clargs_template = '--{name}={{{name}}}'
         clargs = ' '.join([clargs_template.format(name=n) for n in self.grappa_param_names])
 
-        cmd_template = self._cmd_template().format(clargs=clargs)
+        srun_template = '--{key}={value}'
+        srun_settings = ' '.join([srun_template.format(key=k,value=v) for k,v in self.srun_settings.items()])
+
+        cmd_template = self._cmd_template().format(clargs=clargs,srun_settings=srun_settings)
 
         return cmd_template
 
@@ -35,6 +39,7 @@ class GrappaExperiment(Experiment):
         return """../../bin/grappa_srun \
                                 --ppn={{ppn}} \
                                 --nnode={{nnode}} \
+                                {srun_settings} \
                                 -- \
                                 ./{{exe}} \
                                 {clargs} \

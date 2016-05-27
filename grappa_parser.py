@@ -1,7 +1,7 @@
 import itertools
 import json
 import re
-from log2sqlite import Parser, cli
+from log2sqlite import Parser, cli, LOG
 
 __author__ = 'brandon'
 
