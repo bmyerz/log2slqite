@@ -1,53 +1,6 @@
-import sys
 import argparse
-from abc import abstractmethod
-import dataset
-
-
-logging = False
-
-
-def LOG(s):
-    if logging:
-        if type(s).__name__ == "str":
-            print s
-        else:
-            print str(s)
-
-
-class Parser(object):
-
-    @abstractmethod
-    def recorditer(self, inputstr):
-        pass
-
-
-class Processor(object):
-
-    @abstractmethod
-    def processrecord(self, record):
-        pass
-
-    @abstractmethod
-    def close(self):
-        pass
-
-
-class SQLiteProcessor(Processor):
-
-    def __init__(self, dbname, tablename):
-        self.db = dataset.connect('sqlite:///{0}'.format(dbname))
-        self.table = self.db[tablename]
-
-    def processrecord(self, record):
-        for k in self.table.columns:
-          if not k in record:
-            record[k] = None   # for missing columns put None
-
-        self.table.insert(record)
-
-    def close(self):
-        pass
+import sys
+import common
 
 
 def run(inputstr, parser, processor):
@@ -69,7 +22,10 @@ def cli(parser):
     p.add_argument("-v", dest="verbose", action="store_true", help="turn on verbose logging")
 
     args = p.parse_args(sys.argv[1:])
-    logging = args.verbose
+    common.logging = args.verbose
+
+    # only depend on this if we are actually running cli
+    from sqliteprocessor import SQLiteProcessor
 
     with open(args.inputf, 'r') as inf:
         run(inf.read(),
