@@ -69,6 +69,7 @@ class MPIRunGrappaExperiment(GrappaExperiment):
             self).__init__(
             params,
             grappa_params,
+            {},
             setup,
             teardown)
 

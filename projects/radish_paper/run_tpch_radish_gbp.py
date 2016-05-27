@@ -11,7 +11,7 @@ tpch_bigdatann = MPIRunGrappaExperiment({
                                 'query': lambda qn: 'q{0}'.format(qn),
                                 'vtag': 'v1',
                                 'machine': 'bigdata',
-                                'system': 'radish-gbp'
+                                'system': 'radish-gbp-noalign'
                             },
                             {
                                 'shared_pool_memory_fraction': 0.5
