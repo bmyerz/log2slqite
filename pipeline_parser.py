@@ -23,25 +23,25 @@ class PipelineLogParser(Parser):
                 num = m.group('num')
                 time = m.group('time')
                 d = piperesults.get(num, {})
-                d['time'] = time
+                d['pipeline_time'] = time
 
             # process the starts
             for m in re.finditer(self._start_pat, inputstr):
                 num = m.group('num')
                 time = m.group('time')
                 d = piperesults.get(num, {})
-                d['start'] = time
+                d['pipeline_start'] = time
 
             # process the ends
             for m in re.finditer(self._end_pat, inputstr):
                 num = m.group('num')
                 time = m.group('time')
                 d = piperesults.get(num, {})
-                d['end'] = time
+                d['pipeline_end'] = time
 
             # combine into records
             for num, d in piperesults.iteritems():
-                d['num'] = num
+                d['pipeline_id'] = num
                 cr = pdict.copy()
                 cr.update(d)
                 yield cr
